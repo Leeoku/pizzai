@@ -1,9 +1,10 @@
-from typing import List, Optional
+from typing import List, Optional, Dict
 from dataclasses import asdict, dataclass, field, fields
 from enum import Enum, auto
 import random, json
 
 
+# Enum for ingredient categories
 class Category(Enum):
     CHEESES = auto()
     SAUCES = auto()
@@ -12,28 +13,40 @@ class Category(Enum):
     HERBS_AND_SPICES = auto()
     EXTRAS = auto()
 
+
+# PizzaIngredients class using a dictionary for ingredients
 @dataclass(slots=True)
 class PizzaIngredients:
-    cheeses: List[str]
-    sauces: List[str]
-    meats: Optional[List[str]] = field(default_factory=list)
-    vegetables: Optional[List[str]] = field(default_factory=list)
-    herbs_and_spices: Optional[List[str]] = field(default_factory=list)
-    extras: Optional[List[str]] = field(default_factory=list)
+    ingredients: Dict[str, List[str]] = field(
+        default_factory=lambda: {
+            Category.CHEESES.name: [],
+            Category.SAUCES.name: [],
+            Category.MEATS.name: [],
+            Category.VEGETABLES.name: [],
+            Category.HERBS_AND_SPICES.name: [],
+            Category.EXTRAS.name: [],
+        }
+    )
 
 
+# IngredientGeneration class using a dictionary for quantities
 @dataclass(slots=True)
 class IngredientGeneration:
-    cheeses: int
-    sauces: int
-    meats: Optional[int] = 0
-    vegetables: Optional[int] = 0
-    herbs_and_spices: Optional[int] = 0
-    extras: Optional[int] = 0
+    quantities: Dict[str, int] = field(
+        default_factory=lambda: {
+            Category.CHEESES.name: 0,
+            Category.SAUCES.name: 0,
+            Category.MEATS.name: 0,
+            Category.VEGETABLES.name: 0,
+            Category.HERBS_AND_SPICES.name: 0,
+            Category.EXTRAS.name: 0,
+        }
+    )
 
 
+# Pizza ingredients dictionary
 pizza_ingredients = {
-    Category.CHEESES: [
+    Category.CHEESES.name: [
         "mozzarella cheese",
         "parmesan cheese",
         "cheddar cheese",
@@ -45,11 +58,11 @@ pizza_ingredients = {
         "pecorino cheese",
         "gorgonzola cheese",
     ],
-    Category.SAUCES: [
+    Category.SAUCES.name: [
         "tomato sauce",
         "pesto sauce",
     ],
-    Category.MEATS: [
+    Category.MEATS.name: [
         "pepperoni",
         "sausage",
         "ham",
@@ -60,7 +73,7 @@ pizza_ingredients = {
         "prosciutto",
         "anchovies",
     ],
-    Category.VEGETABLES: [
+    Category.VEGETABLES.name: [
         "mushrooms",
         "onions",
         "bell peppers",
@@ -79,7 +92,7 @@ pizza_ingredients = {
         "corn",
         "pineapple",
     ],
-    Category.HERBS_AND_SPICES: [
+    Category.HERBS_AND_SPICES.name: [
         "fresh basil",
         "oregano",
         "thyme",
@@ -88,7 +101,7 @@ pizza_ingredients = {
         "red pepper flakes",
         "black pepper",
     ],
-    Category.EXTRAS: [
+    Category.EXTRAS.name: [
         "barbecue sauce",
         "ranch dressing",
         "balsamic glaze",
@@ -98,38 +111,28 @@ pizza_ingredients = {
     ],
 }
 
-# default_topping_example = IngredientGeneration(cheeses=2, sauces=1)
 
+# Generate ingredients based on the IngredientGeneration input
+def generate_ingredients(topping_input: IngredientGeneration) -> dict[str, int]:
+    final_toppings = PizzaIngredients()
 
-# Returns a JSON version of PizzaIngredients
-def generate_ingredients(topping_input: IngredientGeneration) -> str:
-    final_toppings = PizzaIngredients(
-        cheeses=[], sauces=[], meats=[], vegetables=[], herbs_and_spices=[], extras=[],
-    )
+    # Iterate through the topping input to generate the pizza toppings
+    for category_name, number in topping_input.quantities.items():
+        # Get the number of available options for the category
+        topping_category_length = len(pizza_ingredients[category_name])
 
-    for entry in fields(topping_input):
-        key = entry.name
-        number = getattr(topping_input, key)
-        category = Category[key.upper()]
-
-        if category not in pizza_ingredients:
-            raise ValueError(f"Invalid topping category: {category}")
-
-        number = int(number) if number is not None else 0
-        topping_category_length = len(pizza_ingredients[category])
-
+        # Ensure the number of requested ingredients does not exceed available options
         if number > topping_category_length:
             raise ValueError(
-                f"Cannot select {number} toppings from {category}, only {topping_category_length} available."
+                f"Cannot select {number} toppings from {category_name}, only {topping_category_length} available."
             )
-        random_ingredients = random.sample(pizza_ingredients[category], number)
-        getattr(final_toppings, key).extend(random_ingredients)
+
+        # Randomly select toppings from the available options
+        random_ingredients = random.sample(pizza_ingredients[category_name], number)
+
+        # Add the randomly selected ingredients to the final toppings list
+        final_toppings.ingredients[category_name].extend(random_ingredients)
+
+    # Convert the final toppings dataclass into a dictionary
     topping_dict = asdict(final_toppings)
-    topping_json = json.dumps(topping_dict)
-
-    print(topping_json)
-    return topping_json
-
-
-# generated_toppings = generate_ingredients(default_topping_example)
-# print(generated_toppings)
+    return topping_dict
