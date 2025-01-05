@@ -1,25 +1,15 @@
-from ingredients import generate_ingredients, IngredientGeneration, Category
-from country import get_country
+from utils import assemble_data
+from fastapi import FastAPI
+from routes.routes import router
 
+app = FastAPI()
+app.include_router(router, prefix="/api", tags=["suggest"])
 
-def main():
-    # get_ingredients()
-    # default_toppings = IngredientGeneration(cheeses=2, sauces=1)
-    default_toppings = IngredientGeneration(
-        quantities={
-            Category.CHEESES.name: 2,
-            Category.SAUCES.name: 1,
-            Category.MEATS.name: 2,
-            Category.VEGETABLES.name: 2,
-            Category.HERBS_AND_SPICES.name: 1,
-            Category.EXTRAS.name: 1,
-        }
-    )
-    generated_ingredients = generate_ingredients(default_toppings)
-    country = get_country()
-    final_query = {**generated_ingredients, 'country': country}
-    print(final_query)
+# def main():
+#     assemble_data()
 
 
 if __name__ == "__main__":
-    main()
+    # main()
+    import uvicorn
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
