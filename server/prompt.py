@@ -19,7 +19,7 @@ import os
 
 
 load_dotenv()
-OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 
 client = OpenAI()
@@ -28,7 +28,7 @@ sample_input = {
     "sauces": ["tomato"],
     "meats": ["pepperoni"],
     "vegetables": ["bell peppers", "onions"],
-    "country": "korean"
+    "country": "korean",
 }
 
 

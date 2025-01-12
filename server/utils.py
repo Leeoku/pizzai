@@ -11,5 +11,5 @@ def assemble_data(data):
     country = get_country()
     generated_uuid = uuid.uuid4()
     final_query = {**generated_ingredients, "country": country, "id": generated_uuid}
-    return final_query
     # get_chat_conversation()
+    return final_query

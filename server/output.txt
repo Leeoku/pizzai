@@ -1,0 +1,7 @@
+{
+    'cheeses': [],
+    'sauces': ['gochujang', 'ssamjang'],
+    'meats': ['bulgogi', 'dak galbi'],
+    'vegetables': ['kimchi', 'mung bean sprouts'],
+    'country': 'korean'
+}

@@ -3,7 +3,6 @@ from dataclasses import dataclass, field
 from enum import Enum
 from pydantic import BaseModel, field_validator
 
-
 # Enum for ingredient categories
 class Category(Enum):
     CHEESES = "CHEESES"

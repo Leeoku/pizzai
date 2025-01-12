@@ -1,7 +1,0 @@
-{
-  "cheeses": [],
-  "sauces": ["gochujang", "soy sauce"],
-  "meats": ["bulgogi", "galbi"],
-  "vegetables": ["kimchi", "scallions"],
-  "country": "korean"
-}
